@@ -9,8 +9,8 @@ df <- readRDS("data/star_wars_scripts.rds")
 
 # Use {tidytext} to tokenize the star wars scripts, where a token is a single # word to create a one-token-per-row data frame. Also remove summary columns.
 tidy_script <- df %>%
-  select(-length, -ncap, -nexcl, -nquest, -nword) %>% 
-  unnest_tokens(output = word, input = dialogue)
+  select(-length, -ncap, -nexcl, -nquest, -nword) %>% # Remove summary cols
+  unnest_tokens(output = word, input = dialogue) # Tokenise
 
 # Remove the stop words from the data frame and create “tidy_script” object.
 tidy_script <- tidy_script %>%
@@ -49,8 +49,9 @@ plot_data <- tidy_script %>%
   count(word) %>%
   ungroup() %>% 
   mutate(word = factor(word),
-         freq = as.numeric(n))
+         freq = as.numeric(n)) %>% 
+  arrange(desc(freq))
 
-wordcloud2(plot_data, size = 0.6, figPath="data/vader.png")
+wordcloud2(plot_data, size = 1, figPath="data/vader.png")
 
-wordcloud2(plot_data, size = 0.7, figPath="data/yoda.png")
+wordcloud2(plot_data, size = 1, figPath="data/yoda.png")
