@@ -1,8 +1,5 @@
-library(dplyr)
-library(magrittr)
+library(tidyverse)
 library(tidytext)
-library(stringr)
-library(ggplot2)
 
 # Example 4
 
@@ -11,8 +8,8 @@ df <- readRDS("data/star_wars_scripts.rds")
 
 # Use {tidytext} to tokenize the star wars scripts, where a token is a single
 # word to create a one-token-per-row data frame. Also remove summary columns.
-# Then count the frequency of each word for each move and apply the 
-# TF-IDF function of {tidytext} and extract the top 10 words per movie
+# Then attach the TF-IDF score of each word for each movie 
+# and extract the top 10 words per movie
 tf_idf_script <- df %>%
   select(-length, -ncap, -nexcl, -nquest, -nword) %>% 
   unnest_tokens(output = word, input = dialogue) %>% 

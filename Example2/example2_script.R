@@ -1,5 +1,4 @@
-library(dplyr)
-library(magrittr)
+library(tidyverse)
 library(tidytext)
 
 # Example 2
@@ -7,7 +6,9 @@ library(tidytext)
 # Load the star_wars_scripts.rds dataset
 df <- readRDS("data/star_wars_scripts.rds")
 
-# Use {tidytext} to tokenize the star wars scripts, where a token is a single # word to create a one-token-per-row data frame. Also remove summary columns.
+# Use {tidytext} to tokenize the star wars scripts, where a token is 
+# a single word to create a one-token-per-row data frame. 
+# Also remove summary columns.
 tidy_script <- df %>%
   select(-length, -ncap, -nexcl, -nquest, -nword) %>% # Remove summary cols
   unnest_tokens(output = word, input = dialogue) # Tokenise
@@ -17,21 +18,20 @@ tidy_script <- tidy_script %>%
   anti_join(stop_words, by = "word")
 
 # Find the top 5 words for all movies and create a bar chart visualisation.
-library(ggplot2)
-
 tidy_script %>%
   count(word, movie) %>%
   ungroup() %>% 
   group_by(movie) %>%
   top_n(5) %>%
   ungroup() %>%
-  ggplot(aes(word, n, fill = movie)) +
+  ggplot(aes(x = word, y = n, fill = movie)) +
   geom_col(show.legend = FALSE) +
   labs(y = NULL, x = NULL) +
   facet_wrap(~movie, ncol = 3, scales = "free_y") +
   coord_flip()
 
-# Find the most common word used for all the characters. What do you think is Yoda's?
+# Find the most common word used for all the characters.
+# What do you think is Yoda's?
 res <- tidy_script %>%
   count(word, character) %>%
   ungroup() %>% 
@@ -41,8 +41,8 @@ res <- tidy_script %>%
   arrange(desc(n))
 
 # Create an awesome word cloud!
-
-# devtools::install_github("lchiffon/wordcloud2") # Might require some package installation steps
+# devtools::install_github("lchiffon/wordcloud2")
+# Might require some package installation steps
 library(wordcloud2)
 
 plot_data <- tidy_script %>%
@@ -52,6 +52,7 @@ plot_data <- tidy_script %>%
          freq = as.numeric(n)) %>% 
   arrange(desc(freq))
 
+# If it fails to render, then try again
 wordcloud2(plot_data, size = 1, figPath="data/vader.png")
 
 wordcloud2(plot_data, size = 1, figPath="data/yoda.png")

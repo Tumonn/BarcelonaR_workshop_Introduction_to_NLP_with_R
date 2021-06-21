@@ -1,5 +1,4 @@
-library(dplyr)
-library(magrittr)
+library(tidyverse)
 
 # Example 1
 
@@ -24,6 +23,3 @@ res <- df %>%
             total_quest = sum(nquest),
             total_words = sum(nword)) %>% 
   arrange(desc(total_words))
-
-
-

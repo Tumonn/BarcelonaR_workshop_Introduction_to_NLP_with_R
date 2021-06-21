@@ -1,31 +1,29 @@
-library(dplyr)
-library(magrittr)
+library(tidyverse)
 library(tidytext)
-library(stringr)
-library(ggplot2)
 
 # Example 3
 
 # Load the star_wars_scripts.rds dataset
 df <- readRDS("data/star_wars_scripts.rds")
 
-# Use {tidytext} to tokenize the star wars scripts, where a token is a single 
-# word to create a one-token-per-row data frame. Also remove summary columns.
+# Use {tidytext} to tokenize the star wars scripts, where a token is 
+# a single word to create a one-token-per-row data frame. 
+# Also remove summary columns.
 tidy_script <- df %>%
-  select(-length, -ncap, -nexcl, -nquest, -nword) %>% 
-  unnest_tokens(output = word, input = dialogue)
+  select(-length, -ncap, -nexcl, -nquest, -nword) %>% # Remove summary cols
+  unnest_tokens(output = word, input = dialogue) # Tokenise
 
 # Remove the stop words from the data frame and create “tidy_script” object.
 tidy_script <- tidy_script %>%
   anti_join(stop_words, by = "word")
 
-# Use {tidytext} and create the data frame “afinn” of the AFINN sentiment lexicon and inspect it.
+# Use {tidytext} and create the data frame “afinn” of the AFINN sentiment lexicon
 afinn <- get_sentiments("afinn")
 
 # Inner join the AFINN sentiment lexicon to tidy_script from Example 2
 # and calculate the total sentiment per movie per line
 sentiment_script <- tidy_script %>% 
-  inner_join(afinn) %>% 
+  inner_join(afinn, by = "word") %>% 
   group_by(movie, line) %>% 
   mutate(sentiment = sum(value)) %>% 
   ungroup() %>% 
